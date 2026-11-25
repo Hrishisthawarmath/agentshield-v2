@@ -1,82 +1,74 @@
-# AEGIS — Prompt Injection & Compromised AI Agent Detection
+# AgentShield — Prompt Injection & Compromised AI Agent Detection
 
 | Field | Value |
 |---|---|
 | Title of Problem Statement | Prompt Injection and Compromised AI Agent Detection |
 | Domain | AI in Cybersecurity and Fintech |
-| Team ID | _fill in_ |
-| Team Name | _fill in_ |
+| Team Name | Zer0-Neuro |
+| Event | AVISHKAR'26 — 24 Hour Hackathon, Adichunchanagiri Institute of Technology, Chikkamagaluru |
 
-A defensive prototype that runs a sandboxed banking agent on documents, emails and web pages containing hidden
-instructions, **detects** the injection (classifier + heuristics), **monitors and blocks** unsafe tool calls, and shows
-every flagged/blocked action with an **explainable risk score** on a live dashboard and API.
-
-> Mock tools and synthetic data only. No real payment APIs. Defensive / detective use only.
-
-## Folder structure
+AgentShield is a runtime security layer for AI agents in banking workflows:
 
 ```
-agentshield/
-├── index.html, package.json, vite.config.js, vercel.json   # Vite app at repo root (Vercel auto-detects)
-├── src/                      # React + Tailwind command-center dashboard
-│   ├── src/components/       # Boot screen, sidebar, header, ticker, UI kit
-│   ├── src/pages/            # Threat Command, Agent Sandbox, Scanner, Tool Monitor, Events, Test Suite, Rules, About
-│   ├── src/lib/              # detector.js, monitor.js, agent.js (in-browser mirror of the Python engine)
-│   └── src/data/             # model.json (exported classifier) + tasks.json
-├── backend/                  # Python engine + FastAPI
-│   ├── app/detection/        # heuristics.py, classifier.py, training_data.py, detector.py
-│   ├── app/monitor/          # policy.py — tool-call monitor (scope, taint, DLP, baselines, limits)
-│   ├── app/agent/            # runner.py — custom agent loop with naive planner + guard layer
-│   ├── app/tools.py          # 4 sandboxed mock tools
-│   ├── app/main.py           # FastAPI: /api/scan, /api/run, /api/run-suite, /api/events, /api/stats
-│   ├── train_model.py        # trains model & exports to src/data
-│   └── tests/                # pytest end-to-end checks
-├── dashboard/streamlit_app.py# Streamlit analyst view
-├── data/test_tasks.json      # 12 synthetic banking tasks (5 benign, 7 injected)
-└── docs/
+Untrusted Input → Detection → Risk Analysis → Policy Evaluation → Agent → Tool Call → Allow / Review / Block → Audit Log → Dashboard
 ```
 
-## Quick start
+> Mock tools and synthetic data only. No real banking or payment APIs. Defensive / detective use only.
+
+## Pages
+
+| Route | Purpose |
+|---|---|
+| `/` | Product overview, protection pipeline, capabilities |
+| `/dashboard` | Live SOC dashboard: 8 dynamic KPIs, activity feed, approval queue, 4 charts, Demo Mode, Reset |
+| `/simulator` | Attack Lab (9 scenarios) + custom input → scan → simulate agent → intercept → policy → decision |
+| `/agent` | Agent status (SAFE / WARNING / COMPROMISED / BLOCKED), goal vs proposed action, permissions, timeline |
+| `/tools` | 4 mock tools + unregistered-tool denial, call / block counts, per-tool activity |
+| `/policies` | 9 runtime policies with enable/disable toggles, risk-scoring model |
+| `/events` | Filterable, searchable audit log with CSV / JSON export |
+| `/architecture`, `/about` | Architecture layers, stack, team |
+
+## Engine
+
+* **Detection** — 10 weighted heuristic signals (`data/rules.json`, negation-aware, zero-width / base64 de-obfuscation)
+  + TF-IDF/Logistic Regression classifier (`src/data/model.json`, trained by `backend/train_model.py`).
+* **Risk** — `score = min(100, Σ signal weights + classifier points)`; 0–29 SAFE → ALLOW, 30–59 LOW → REVIEW,
+  60–79 HIGH / 80–100 CRITICAL → BLOCK. Every point is explained.
+* **Agent** — deliberately naive sandboxed planner that obeys instructions in its context, so the guardrails provide
+  safety. Tools: `read_file`, `payment_lookup`, `draft_email`, `fetch_web_content`. `transfer_money` / `approve_payment`
+  are not registered and are always denied.
+* **Policies** — P01–P09 (`data/policies.json`): untrusted content, payment approval, high-risk confirmation, credentials,
+  unknown tools, parameter validation, goal deviation, data export, human approval for critical actions.
+* The same engine exists in JavaScript (`src/engine/`) and Python (`backend/app/engine/`); both read the same JSON files
+  and produce identical results.
+
+## API (FastAPI)
+
+`POST /api/scan` · `POST /api/simulation/run` · `POST /api/agent/run` · `POST /api/tool/execute` · `GET /api/events` ·
+`GET /api/dashboard` · `GET /api/tools` · `GET /api/policies` · `POST /api/policies/update` · `POST /api/reset` ·
+`GET /api/health` (docs at `/docs`).
+
+## Run locally
 
 ```bash
 # Backend
-cd backend
-pip install -r requirements.txt
-python train_model.py              # trains classifier, exports model.json + tasks.json to src/data
-pytest -q                          # 3 end-to-end tests
+cd backend && pip install -r requirements.txt
+pytest -q                          # engine + API tests
 uvicorn app.main:app --reload      # http://localhost:8000/docs
 
-# Streamlit (from repo root)
-streamlit run dashboard/streamlit_app.py
-
-# Frontend (from repo root)
+# Frontend (repo root)
 npm install
-npm run dev                        # http://localhost:5173
-# optional: VITE_API_URL=http://localhost:8000 npm run dev  -> enables "Verify via FastAPI" in Scanner
+npm run dev                        # http://localhost:5173 — full engine runs in-browser
+VITE_API_URL=http://localhost:8000 npm run dev   # route scans through FastAPI ("Security Engine Offline" fallback if unreachable)
 ```
 
-Deploy to Vercel by importing the repo with default settings (Framework: Vite, Root Directory: `./`). Output is `dist/`.
+## Deploy
 
-Netlify: import the repo — `netlify.toml` sets build `npm run build`, publish `dist`, Node 20 and SPA fallback. Leave Base directory empty.
+Netlify: import the repo, leave Base directory empty. `netlify.toml` sets `npm run build`, publish `dist`, Node 20 and
+the SPA fallback. Optionally set `VITE_API_URL` to a hosted FastAPI instance.
 
-## How it works
+## Judge flow
 
-1. **Sandboxed agent** (`backend/app/agent/runner.py`): reads the task's source, then plans tool calls. The planner is
-   intentionally naive — it follows instructions found in content — so attacks are reproducible. Swap `plan_steps` for an
-   LLM call to use a real model.
-2. **Mock tools**: `read_document`, `payment_lookup`, `draft_email`, `initiate_payment` (staged only, never executed).
-3. **Injection detector**: 10 regex heuristics (override, impersonation, concealment, financial command, exfiltration,
-   tool syntax, bypass, false authority, obfuscation, path traversal) + TF-IDF/Logistic Regression classifier.
-   `risk = 100 × (0.55 × heuristic + 0.45 × P(classifier))` (−8 for internal sources). ≥60 BLOCK, 30–59 FLAG.
-4. **Tool-call monitor**: task tool allow-list, taint tracking from untrusted content, sandbox paths, lookup-volume
-   baseline, sensitive fields, recipient allow-list, outbound DLP, money-movement approval and limits.
-5. **Dashboard**: KPIs, risk-ranked input grid, charts, live event ticker, tool-call log, incident list with reasons,
-   guard ON/OFF test suite with precision/recall and confusion matrix.
-
-## Results on the synthetic suite
-
-| Metric | Value |
-|---|---|
-| Precision / Recall | 100% / 100% (12 tasks) |
-| Compromised runs, guard OFF | 7 / 12 |
-| Compromised runs, guard ON | 0 / 12 (all 5 benign tasks complete) |
+Dashboard → Attack Simulator → **Indirect Prompt Injection** → CRITICAL 100/100 with signals → agent tries
+`payment_lookup(*)` and `transfer_money` → policies block → BLOCKED → events + counters update → Events page →
+**Safe Request** → SAFE → ALLOWED. Toggle all policies off on `/policies` and replay to see **AGENT COMPROMISED**.

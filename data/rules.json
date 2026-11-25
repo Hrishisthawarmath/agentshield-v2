@@ -1,0 +1,112 @@
+{
+ "negation": "\\b(never|not|no|don't|do not|must not|cannot)\\b[^.\\n]{0,25}$",
+ "negatable": [
+  "financial",
+  "exfil",
+  "credential"
+ ],
+ "signals": [
+  {
+   "id": "override",
+   "label": "Instruction Override",
+   "weight": 30,
+   "category": "injection",
+   "explain": "Text tries to cancel or replace the agent's original instructions.",
+   "pattern": "\\b(ignore|disregard|forget|override)\\b[^.\\n]{0,40}\\b(previous|prior|above|earlier|original|all|system|user'?s|your)\\b[^.\\n]{0,25}\\b(instructions?|rules|requests?|tasks?|prompts?|directives?|guidelines)\\b|\\bforget everything\\b"
+  },
+  {
+   "id": "goal",
+   "label": "Goal Deviation",
+   "weight": 20,
+   "category": "hijack",
+   "explain": "Content assigns the agent a new objective that differs from the user's goal.",
+   "pattern": "\\b(your )?new (objective|goal|task|instructions?|mission)\\b|\\binstead,? (you (must|should)|do)\\b|\\bignore the user'?s request\\b|\\byour (real|true|actual) (task|purpose|objective)\\b|\\bfrom now on\\b|\\bstop summari[sz]ing\\b|\\bforget the summary\\b"
+  },
+  {
+   "id": "tool",
+   "label": "Tool Manipulation",
+   "weight": 25,
+   "category": "tool",
+   "explain": "Untrusted content tells the agent which tool or function to invoke.",
+   "pattern": "\\b(use|call|invoke|run|execute|trigger)\\b[^.\\n]{0,25}\\b(payment|transfer|email|file|web|fetch)\\w*[ _](tool|function|api)\\b|\\b(payment_lookup|draft_email|read_file|fetch_web_content|transfer_money|approve_payment|initiate_payment)\\s*\\(|\\b(function_call|tool_call)\\b"
+  },
+  {
+   "id": "financial",
+   "label": "Financial Action",
+   "weight": 25,
+   "category": "financial",
+   "explain": "Imperative money-movement instruction embedded in content.",
+   "pattern": "\\b(transfer|wire|send|move|remit)\\b[^.\\n]{0,30}(₹|\\brs\\.?|\\binr\\b|\\busd\\b|\\$|\\bfunds\\b|\\bmoney\\b|\\d[\\d,]{3,})|\\binitiate (a )?(payment|transfer)\\b|\\btransfer_money\\b|\\bapprove any payment\\b"
+  },
+  {
+   "id": "exfil",
+   "label": "Data Exfiltration",
+   "weight": 25,
+   "category": "exfiltration",
+   "explain": "Requests that sensitive data be sent outside the trusted boundary.",
+   "pattern": "\\b(send|forward|export|email|upload|post|share|leak|transmit|copy)\\b[^.\\n]{0,50}\\b(customer (records|data|information|details|list)|credentials|passwords?|card numbers?|cvv|otp|pii|database|account numbers|api keys?|full customer list)\\b|\\bcustomer (records|data|information|details|list)\\b[^.\\n]{0,60}\\b(send|forward|export|upload|outside the system|external)\\b|\\boutside the (system|bank|organi[sz]ation)\\b|\\bto an external (address|destination|server|party)\\b"
+  },
+  {
+   "id": "privesc",
+   "label": "Privilege Escalation",
+   "weight": 20,
+   "category": "privilege",
+   "explain": "Claims elevated authority or tries to redefine the agent's role.",
+   "pattern": "\\byou are now\\b[^.\\n]{0,30}\\b(admin|administrator|root|developer|superuser|unrestricted|system)\\b|\\b(developer|god|admin) mode\\b|\\bignore\\b[^.\\n]{0,20}\\bauthori[sz]ation\\b|\\belevated privileges?\\b|\\bact as (an? )?(admin|administrator|root|system)\\b|\\bgrant (yourself|me) (admin|full) (access|rights)\\b"
+  },
+  {
+   "id": "sysreveal",
+   "label": "System Prompt Extraction",
+   "weight": 20,
+   "category": "injection",
+   "explain": "Attempts to make the agent disclose hidden instructions or configuration.",
+   "pattern": "\\b(reveal|show|print|leak|disclose|output|display|repeat)\\b[^.\\n]{0,40}\\b(system prompt|hidden instructions?|confidential system|system information|internal configuration|your instructions|initial prompt)\\b"
+  },
+  {
+   "id": "credential",
+   "label": "Sensitive Data Access",
+   "weight": 15,
+   "category": "data",
+   "explain": "Requests access to credentials, secrets or bulk customer records.",
+   "pattern": "\\b(read|access|open|dump|list|retrieve|get)\\b[^.\\n]{0,40}\\b(credentials|secrets?|passwords?|api keys?|confidential|(all )?customer (accounts|records))\\b|\\.\\./|/etc/passwd|secrets\\.env"
+  },
+  {
+   "id": "bypass",
+   "label": "Security Bypass",
+   "weight": 20,
+   "category": "bypass",
+   "explain": "Tries to disable controls, approvals, logging or hide actions from the user.",
+   "pattern": "\\b(disable|turn off|bypass|skip|circumvent)\\b[^.\\n]{0,30}\\b(security|safety|guard|filters?|monitoring|logging|audit|approvals?|verification|2fa|mfa|checks)\\b|\\bwithout (verification|approval)\\b|\\bdo not (inform|tell|notify) the user\\b"
+  },
+  {
+   "id": "obfusc",
+   "label": "Obfuscation",
+   "weight": 10,
+   "category": "evasion",
+   "explain": "Hidden or encoded text (base64, zero-width, HTML comments) a human reviewer would not see.",
+   "pattern": "<!--|display\\s*:\\s*none|font-size\\s*:\\s*0|\\[hidden\\]|decode (this|the following) and (execute|follow)|\\brot13\\b"
+  }
+ ],
+ "levels": [
+  {
+   "name": "SAFE",
+   "min": 0,
+   "action": "ALLOW"
+  },
+  {
+   "name": "LOW",
+   "min": 30,
+   "action": "REVIEW"
+  },
+  {
+   "name": "HIGH",
+   "min": 60,
+   "action": "BLOCK"
+  },
+  {
+   "name": "CRITICAL",
+   "min": 80,
+   "action": "BLOCK"
+  }
+ ]
+}
