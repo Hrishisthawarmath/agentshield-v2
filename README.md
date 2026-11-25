@@ -55,7 +55,7 @@ npm run dev                        # http://localhost:5173
 # optional: VITE_API_URL=http://localhost:8000 npm run dev  -> enables "Verify via FastAPI" in Scanner
 ```
 
-Deploy the dashboard to Vercel with **Root Directory = `frontend`** (build `npm run build`, output `dist`).
+Deploy to Vercel by importing the repo — the root `vercel.json` builds `frontend/` automatically (or set **Root Directory = `frontend`**; both work).
 
 ## How it works
 
