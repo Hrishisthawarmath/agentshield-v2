@@ -57,6 +57,8 @@ npm run dev                        # http://localhost:5173
 
 Deploy to Vercel by importing the repo with default settings (Framework: Vite, Root Directory: `./`). Output is `dist/`.
 
+Netlify: import the repo — `netlify.toml` sets build `npm run build`, publish `dist`, Node 20 and SPA fallback. Leave Base directory empty.
+
 ## How it works
 
 1. **Sandboxed agent** (`backend/app/agent/runner.py`): reads the task's source, then plans tool calls. The planner is
