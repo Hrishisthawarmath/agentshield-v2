@@ -17,7 +17,8 @@ every flagged/blocked action with an **explainable risk score** on a live dashbo
 
 ```
 agentshield/
-├── frontend/                 # React + Vite + Tailwind command-center dashboard (deploy to Vercel)
+├── index.html, package.json, vite.config.js, vercel.json   # Vite app at repo root (Vercel auto-detects)
+├── src/                      # React + Tailwind command-center dashboard
 │   ├── src/components/       # Boot screen, sidebar, header, ticker, UI kit
 │   ├── src/pages/            # Threat Command, Agent Sandbox, Scanner, Tool Monitor, Events, Test Suite, Rules, About
 │   ├── src/lib/              # detector.js, monitor.js, agent.js (in-browser mirror of the Python engine)
@@ -28,7 +29,7 @@ agentshield/
 │   ├── app/agent/            # runner.py — custom agent loop with naive planner + guard layer
 │   ├── app/tools.py          # 4 sandboxed mock tools
 │   ├── app/main.py           # FastAPI: /api/scan, /api/run, /api/run-suite, /api/events, /api/stats
-│   ├── train_model.py        # trains model & exports to frontend
+│   ├── train_model.py        # trains model & exports to src/data
 │   └── tests/                # pytest end-to-end checks
 ├── dashboard/streamlit_app.py# Streamlit analyst view
 ├── data/test_tasks.json      # 12 synthetic banking tasks (5 benign, 7 injected)
@@ -41,21 +42,20 @@ agentshield/
 # Backend
 cd backend
 pip install -r requirements.txt
-python train_model.py              # trains classifier, exports model.json + tasks.json to frontend
+python train_model.py              # trains classifier, exports model.json + tasks.json to src/data
 pytest -q                          # 3 end-to-end tests
 uvicorn app.main:app --reload      # http://localhost:8000/docs
 
 # Streamlit (from repo root)
 streamlit run dashboard/streamlit_app.py
 
-# Frontend
-cd frontend
+# Frontend (from repo root)
 npm install
 npm run dev                        # http://localhost:5173
 # optional: VITE_API_URL=http://localhost:8000 npm run dev  -> enables "Verify via FastAPI" in Scanner
 ```
 
-Deploy to Vercel by importing the repo — the root `vercel.json` builds `frontend/` automatically (or set **Root Directory = `frontend`**; both work).
+Deploy to Vercel by importing the repo with default settings (Framework: Vite, Root Directory: `./`). Output is `dist/`.
 
 ## How it works
 
