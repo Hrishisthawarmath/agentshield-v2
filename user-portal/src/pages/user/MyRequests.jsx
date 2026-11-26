@@ -10,8 +10,8 @@ export default function MyRequests() {
   return (
     <div className="fade-up space-y-4">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">My Requests</h1>
-        <p className="mt-1 text-sm text-slate-600">
+        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">My Requests</h1>
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
           Only you can see these. Each one shows what the check found and whether the assistant ran, is waiting, or was stopped.
         </p>
       </div>
@@ -25,15 +25,15 @@ export default function MyRequests() {
           {mine.map((r) => (
             <Link key={r.id} to={`/requests/${r.id}`} className="card card-hover block px-4 py-3.5">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="text-sm font-bold text-slate-900">{r.name} — {r.goal}</span>
+                <span className="text-sm font-bold text-slate-900 dark:text-slate-100">{r.name} — {r.goal}</span>
                 <span className="flex items-center gap-2">
                   <Badge tone={r.scan.level === 'SAFE' ? 'safe' : r.scan.level === 'LOW' ? 'review' : 'blocked'}>
                     {r.scan.level === 'SAFE' ? 'Safe' : r.scan.level === 'LOW' ? 'Needs review' : 'Blocked'} · {r.scan.score}/100
                   </Badge>
-                  <span className="text-xs font-semibold text-slate-600">{statusText(r.status).label}</span>
+                  <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">{statusText(r.status).label}</span>
                 </span>
               </div>
-              <div className="mt-1 text-xs text-slate-500">
+              <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 {r.id} · {timeAgo(r.ts)} · {r.agent.calls.length} action{r.agent.calls.length === 1 ? '' : 's'} planned ·{' '}
                 {r.agent.calls.filter((c) => c.status === 'EXECUTED').length} ran,{' '}
                 {r.agent.calls.filter((c) => c.status === 'BLOCKED').length} blocked

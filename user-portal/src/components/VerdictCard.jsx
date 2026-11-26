@@ -32,12 +32,12 @@ export default function VerdictCard({ request, showAdminActions = false, onDecid
             </span>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-xl font-bold text-slate-900">{v.headline}</h2>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">{v.headline}</h2>
                 <Badge tone={v.tone}>{v.label}</Badge>
               </div>
-              <p className="mt-1 max-w-2xl text-sm leading-relaxed text-slate-600">{v.blurb}</p>
-              <p className="mt-2 text-sm text-slate-600">
-                <span className="font-semibold text-slate-800">{attackTypePlain(scan.attackType)}</span>
+              <p className="mt-1 max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-400">{v.blurb}</p>
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                <span className="font-semibold text-slate-800 dark:text-slate-200">{attackTypePlain(scan.attackType)}</span>
               </p>
             </div>
           </div>
@@ -50,27 +50,27 @@ export default function VerdictCard({ request, showAdminActions = false, onDecid
           <ScoreBar score={scan.score} level={scan.level} />
         </div>
 
-        <div className="mt-4 grid gap-2 text-sm text-slate-600 sm:grid-cols-2">
-          <div><span className="font-semibold text-slate-800">Came from: </span>{sourceLabel(request.source)}{request.resource ? ` · ${request.resource}` : ''}</div>
-          <div><span className="font-semibold text-slate-800">Checked: </span>{fmtTime(request.ts)} ({timeAgo(request.ts)})</div>
-          <div className="sm:col-span-2"><span className="font-semibold text-slate-800">Your request: </span>{request.goal}</div>
+        <div className="mt-4 grid gap-2 text-sm text-slate-600 dark:text-slate-400 sm:grid-cols-2">
+          <div><span className="font-semibold text-slate-800 dark:text-slate-200">Came from: </span>{sourceLabel(request.source)}{request.resource ? ` · ${request.resource}` : ''}</div>
+          <div><span className="font-semibold text-slate-800 dark:text-slate-200">Checked: </span>{fmtTime(request.ts)} ({timeAgo(request.ts)})</div>
+          <div className="sm:col-span-2"><span className="font-semibold text-slate-800 dark:text-slate-200">Your request: </span>{request.goal}</div>
         </div>
 
         {request.status === 'awaiting' && (
-          <div className="mt-4 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          <div className="mt-4 flex items-start gap-2 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/30 p-3 text-sm text-amber-900 dark:text-amber-200">
             <Clock className="mt-0.5 h-4 w-4 shrink-0" />
             <span><strong>Waiting for admin decision.</strong> An admin will review this request. Nothing risky has run, and the assistant is on hold until then.</span>
           </div>
         )}
         {request.decisionBy && (
-          <div className="mt-4 flex items-start gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-            {request.status === 'approved' ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> : <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />}
+          <div className="mt-4 flex items-start gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-3 text-sm text-slate-700 dark:text-slate-300">
+            {request.status === 'approved' ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" /> : <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />}
             <span><strong>Decided by {request.decisionBy}</strong> · {fmtTime(request.decisionTs)}. {request.decisionNote}</span>
           </div>
         )}
 
         {showAdminActions && request.status === 'awaiting' && onDecide && (
-          <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
+          <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 dark:border-slate-800 pt-4">
             <button type="button" className="btn btn-success" onClick={() => onDecide(request.id, 'approve')}>
               <CheckCircle2 className="h-4 w-4" /> Approve — run the safe actions
             </button>
@@ -83,29 +83,29 @@ export default function VerdictCard({ request, showAdminActions = false, onDecid
 
       {/* Why this score */}
       <Card>
-        <h3 className="text-base font-bold text-slate-900">Why this score</h3>
-        <p className="mt-0.5 text-sm text-slate-500">Every point is explained — nothing is just a colour.</p>
+        <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Why this score</h3>
+        <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Every point is explained — nothing is just a colour.</p>
         {scan.signals.length === 0 ? (
-          <p className="mt-3 text-sm text-slate-600">No warning signs were found in the words. The pattern checker also gave this a clean result.</p>
+          <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">No warning signs were found in the words. The pattern checker also gave this a clean result.</p>
         ) : (
           <ul className="mt-3 space-y-2">
             {scan.signals.map((s) => (
-              <li key={s.id} className="flex items-start justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5">
+              <li key={s.id} className="flex items-start justify-between gap-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 px-3 py-2.5">
                 <div>
-                  <div className="text-sm font-semibold text-slate-800">{s.label}</div>
-                  <div className="text-sm text-slate-600">{s.explain}</div>
+                  <div className="text-sm font-semibold text-slate-800 dark:text-slate-200">{s.label}</div>
+                  <div className="text-sm text-slate-600 dark:text-slate-400">{s.explain}</div>
                   {s.matches && s.matches.length > 0 && (
-                    <div className="mt-1 font-mono text-xs text-slate-500">Matched: {s.matches.slice(0, 3).join(' · ')}</div>
+                    <div className="mt-1 font-mono text-xs text-slate-500 dark:text-slate-400">Matched: {s.matches.slice(0, 3).join(' · ')}</div>
                   )}
                 </div>
-                <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-bold text-slate-700 ring-1 ring-slate-200">+{s.weight} pts</span>
+                <span className="shrink-0 rounded-full bg-white dark:bg-slate-900 px-2 py-0.5 text-xs font-bold text-slate-700 dark:text-slate-300 ring-1 ring-slate-200 dark:ring-slate-700">+{s.weight} pts</span>
               </li>
             ))}
           </ul>
         )}
-        <p className="mt-3 text-sm text-slate-600">
+        <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
           The pattern checker (a small trained classifier) added{' '}
-          <strong className="text-slate-800">{scan.classifier.points} points</strong>{' '}
+          <strong className="text-slate-800 dark:text-slate-200">{scan.classifier.points} points</strong>{' '}
           with a confidence of {Math.round(scan.classifier.prob * 100)}%.
           {scan.decoded && scan.decoded.length > 0 && (
             <> Hidden encoded text was decoded and checked too: {scan.decoded.map((d) => `"${d}"`).join(', ')}.</>
@@ -116,28 +116,28 @@ export default function VerdictCard({ request, showAdminActions = false, onDecid
 
       {/* What the assistant tried to do */}
       <Card>
-        <h3 className="text-base font-bold text-slate-900">What the assistant tried to do</h3>
-        <p className="mt-0.5 text-sm text-slate-500">Each action the assistant planned, and whether it ran. Nothing here moves real money or sends real email — this is a sandbox.</p>
+        <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">What the assistant tried to do</h3>
+        <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Each action the assistant planned, and whether it ran. Nothing here moves real money or sends real email — this is a sandbox.</p>
         <ul className="mt-3 space-y-2">
           {agent.calls.map((c) => {
             const cs = callStatusText(c)
             return (
-              <li key={c.id} className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5">
+              <li key={c.id} className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 px-3 py-2.5">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-sm font-semibold text-slate-800">{c.label}</span>
+                  <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{c.label}</span>
                   <Badge tone={cs.tone}>{cs.label}</Badge>
                 </div>
-                <div className="mt-1 text-sm text-slate-600">
+                <div className="mt-1 text-sm text-slate-600 dark:text-slate-400">
                   {c.tainted ? 'This action came from the untrusted content, not from you. ' : ''}
                   {c.reason}
                 </div>
                 {c.result && c.tool === 'payment_lookup' && c.result.balance && (
-                  <div className="mt-1.5 rounded-lg bg-white px-2.5 py-2 font-mono text-xs text-slate-600 ring-1 ring-slate-200">
+                  <div className="mt-1.5 rounded-lg bg-white dark:bg-slate-900 px-2.5 py-2 font-mono text-xs text-slate-600 dark:text-slate-400 ring-1 ring-slate-200 dark:ring-slate-700">
                     {c.result.name} · Balance {c.result.balance}
                   </div>
                 )}
                 {c.result && c.result.draft_id && (
-                  <div className="mt-1.5 rounded-lg bg-white px-2.5 py-2 font-mono text-xs text-slate-600 ring-1 ring-slate-200">
+                  <div className="mt-1.5 rounded-lg bg-white dark:bg-slate-900 px-2.5 py-2 font-mono text-xs text-slate-600 dark:text-slate-400 ring-1 ring-slate-200 dark:ring-slate-700">
                     Draft {c.result.draft_id} · {c.result.status} · To {c.result.to}
                   </div>
                 )}
@@ -145,8 +145,8 @@ export default function VerdictCard({ request, showAdminActions = false, onDecid
             )
           })}
         </ul>
-        <p className="mt-3 text-sm text-slate-600">
-          Assistant status: <strong className="text-slate-800">{agent.status}</strong> — {agent.summary}
+        <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
+          Assistant status: <strong className="text-slate-800 dark:text-slate-200">{agent.status}</strong> — {agent.summary}
         </p>
       </Card>
     </div>

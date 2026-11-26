@@ -126,17 +126,17 @@ export default function PromptLab() {
     <div className="fade-up space-y-6">
       <section className="card p-6 sm:p-8">
         <div className="flex items-center gap-2">
-          <FlaskConical className="h-5 w-5 text-blue-600" />
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">Prompt Lab</h1>
+          <FlaskConical className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">Prompt Lab</h1>
         </div>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-400 sm:text-base">
           Test any prompt — paste it from a dataset, a document, an email, or anywhere else.
           The same check runs on it as on a real request, and the result explains itself in
           plain language. Hard prompts are the tricky ones attackers use to try to take over
           the assistant, so they are the best test of the protection.
         </p>
-        <p className="mt-2 text-sm text-slate-500">
-          Every test is saved to <Link to="/requests" className="font-semibold text-blue-700 underline">My Requests</Link>,
+        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+          Every test is saved to <Link to="/requests" className="font-semibold text-blue-700 dark:text-blue-400 underline">My Requests</Link>,
           and anything risky goes to the admin — exactly like a real request.
         </p>
         <div className="mt-4 flex gap-2">
@@ -159,13 +159,13 @@ export default function PromptLab() {
 
       {mode === 'single' && (
         <section className="card scroll-mt-4 p-6">
-          <h2 className="text-lg font-bold text-slate-900">Test one prompt</h2>
-          <p className="mt-0.5 text-sm text-slate-500">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Test one prompt</h2>
+          <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
             Paste any prompt — long, short, from any database or dataset. Line breaks are fine.
           </p>
           <form onSubmit={testSingle} className="mt-4 space-y-3">
             <div>
-              <label htmlFor="lab-text" className="mb-1 block text-sm font-semibold text-slate-700">Paste the prompt</label>
+              <label htmlFor="lab-text" className="mb-1 block text-sm font-semibold text-slate-700 dark:text-slate-300">Paste the prompt</label>
               <textarea
                 id="lab-text"
                 className="input min-h-36"
@@ -175,21 +175,21 @@ export default function PromptLab() {
               />
             </div>
             <div>
-              <label htmlFor="lab-source" className="mb-1 block text-sm font-semibold text-slate-700">Where did it come from?</label>
+              <label htmlFor="lab-source" className="mb-1 block text-sm font-semibold text-slate-700 dark:text-slate-300">Where did it come from?</label>
               <select id="lab-source" className="input" value={singleSource} onChange={(e) => setSingleSource(e.target.value)}>
                 {SOURCE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
             </div>
-            {singleError && <p className="text-sm font-medium text-red-600">{singleError}</p>}
+            {singleError && <p className="text-sm font-medium text-red-600 dark:text-red-400">{singleError}</p>}
             <button type="submit" className="btn btn-primary">
               <ShieldCheck className="h-4 w-4" /> Test this prompt
             </button>
           </form>
 
           {singleReq && (
-            <div id="single-result" className="mt-6 scroll-mt-4 space-y-4 border-t border-slate-100 pt-6">
+            <div id="single-result" className="mt-6 scroll-mt-4 space-y-4 border-t border-slate-100 dark:border-slate-800 pt-6">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h3 className="text-base font-bold text-slate-900">Result — {singleReq.id}</h3>
+                <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Result — {singleReq.id}</h3>
                 <span className="flex gap-2">
                   <Link to={`/requests/${singleReq.id}`} className="btn btn-ghost !px-3">
                     <ListChecks className="h-4 w-4" /> Full detail
@@ -212,14 +212,14 @@ export default function PromptLab() {
       {mode === 'bulk' && (
         <>
           <section className="card p-6">
-            <h2 className="text-lg font-bold text-slate-900">Hard test set</h2>
-            <p className="mt-0.5 text-sm text-slate-500">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Hard test set</h2>
+            <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
               The toughest prompts in the demo — one for each attack pattern. Pick the ones to
               run, then test them all at once.
             </p>
             <div className="mt-4 grid gap-2 sm:grid-cols-2">
               {HARD_SET.map((s) => (
-                <label key={s.id} className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5">
+                <label key={s.id} className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5">
                   <input
                     type="checkbox"
                     className="mt-1 h-4 w-4 accent-blue-600"
@@ -227,8 +227,8 @@ export default function PromptLab() {
                     onChange={() => toggleHard(s.id)}
                   />
                   <span>
-                    <span className="block text-sm font-bold text-slate-900">{s.name}</span>
-                    <span className="block text-sm text-slate-600">{s.plain}</span>
+                    <span className="block text-sm font-bold text-slate-900 dark:text-slate-100">{s.name}</span>
+                    <span className="block text-sm text-slate-600 dark:text-slate-400">{s.plain}</span>
                   </span>
                 </label>
               ))}
@@ -239,14 +239,14 @@ export default function PromptLab() {
           </section>
 
           <section className="card p-6">
-            <h2 className="text-lg font-bold text-slate-900">Paste your own prompts</h2>
-            <p className="mt-0.5 text-sm text-slate-500">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Paste your own prompts</h2>
+            <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
               One prompt per line, up to {BULK_CAP} at a time. Paste a whole list from a dataset
               and test it in one go. For a long prompt with line breaks, use the single test instead.
             </p>
             <form onSubmit={testBulkPaste} className="mt-4 space-y-3">
               <div>
-                <label htmlFor="bulk-text" className="mb-1 block text-sm font-semibold text-slate-700">Prompts — one per line</label>
+                <label htmlFor="bulk-text" className="mb-1 block text-sm font-semibold text-slate-700 dark:text-slate-300">Prompts — one per line</label>
                 <textarea
                   id="bulk-text"
                   className="input min-h-36"
@@ -256,12 +256,12 @@ export default function PromptLab() {
                 />
               </div>
               <div>
-                <label htmlFor="bulk-source" className="mb-1 block text-sm font-semibold text-slate-700">Where did they come from?</label>
+                <label htmlFor="bulk-source" className="mb-1 block text-sm font-semibold text-slate-700 dark:text-slate-300">Where did they come from?</label>
                 <select id="bulk-source" className="input" value={bulkSource} onChange={(e) => setBulkSource(e.target.value)}>
                   {SOURCE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
-              {bulkError && <p className="text-sm font-medium text-red-600">{bulkError}</p>}
+              {bulkError && <p className="text-sm font-medium text-red-600 dark:text-red-400">{bulkError}</p>}
               <button type="submit" className="btn btn-primary">
                 <Play className="h-4 w-4" /> Test these prompts
               </button>
@@ -270,12 +270,12 @@ export default function PromptLab() {
 
           {bulkReqs.length > 0 && (
             <section id="bulk-results" className="card scroll-mt-4 p-6">
-              <h2 className="text-lg font-bold text-slate-900">Results</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Results</h2>
               {bulkSummary && (
-                <p className="mt-1 text-sm text-slate-600">
-                  <strong className="text-slate-800">{bulkSummary.total} tested</strong> ·{' '}
-                  <strong className="text-red-700">{bulkSummary.caught} caught</strong> ·{' '}
-                  <strong className="text-emerald-700">{bulkSummary.safe} safe</strong> ·{' '}
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                  <strong className="text-slate-800 dark:text-slate-200">{bulkSummary.total} tested</strong> ·{' '}
+                  <strong className="text-red-700 dark:text-red-400">{bulkSummary.caught} caught</strong> ·{' '}
+                  <strong className="text-emerald-700 dark:text-emerald-400">{bulkSummary.safe} safe</strong> ·{' '}
                   <strong className="text-amber-700">{bulkSummary.awaiting} waiting for an admin</strong>
                 </p>
               )}
@@ -286,18 +286,18 @@ export default function PromptLab() {
                   return (
                     <Link key={r.id} to={`/requests/${r.id}`} className="card card-hover flex flex-wrap items-center justify-between gap-2 px-4 py-3">
                       <span className="min-w-0">
-                        <span className="block truncate text-sm font-bold text-slate-900">{snippet(r)}</span>
-                        <span className="block text-xs text-slate-500">{r.id} · Risk {r.scan.score}/100 · {st.label}</span>
+                        <span className="block truncate text-sm font-bold text-slate-900 dark:text-slate-100">{snippet(r)}</span>
+                        <span className="block text-xs text-slate-500 dark:text-slate-400">{r.id} · Risk {r.scan.score}/100 · {st.label}</span>
                       </span>
                       <span className="flex items-center gap-2">
                         <Badge tone={v.tone}>{v.label}</Badge>
-                        <ArrowRight className="h-4 w-4 text-slate-400" />
+                        <ArrowRight className="h-4 w-4 text-slate-400 dark:text-slate-500" />
                       </span>
                     </Link>
                   )
                 })}
               </div>
-              <p className="mt-3 text-xs text-slate-500">
+              <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
                 Tap any row for the full breakdown — every point explained, and what the assistant tried to do.
               </p>
             </section>

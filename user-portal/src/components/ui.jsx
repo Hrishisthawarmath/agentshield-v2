@@ -1,11 +1,11 @@
 import { verdictOf } from '../lib/requests.js'
 
 export const TONE = {
-  safe: { chip: 'bg-emerald-50 text-emerald-700 border-emerald-200', dot: 'bg-emerald-500', bar: '#10b981', text: 'text-emerald-700' },
-  review: { chip: 'bg-amber-50 text-amber-800 border-amber-200', dot: 'bg-amber-500', bar: '#f59e0b', text: 'text-amber-800' },
-  blocked: { chip: 'bg-red-50 text-red-700 border-red-200', dot: 'bg-red-500', bar: '#ef4444', text: 'text-red-700' },
-  info: { chip: 'bg-blue-50 text-blue-700 border-blue-200', dot: 'bg-blue-500', bar: '#3b82f6', text: 'text-blue-700' },
-  neutral: { chip: 'bg-slate-100 text-slate-600 border-slate-200', dot: 'bg-slate-400', bar: '#64748b', text: 'text-slate-600' },
+  safe: { chip: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800', dot: 'bg-emerald-500', bar: '#10b981', text: 'text-emerald-700 dark:text-emerald-400' },
+  review: { chip: 'bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800', dot: 'bg-amber-500', bar: '#f59e0b', text: 'text-amber-800 dark:text-amber-300' },
+  blocked: { chip: 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800', dot: 'bg-red-500', bar: '#ef4444', text: 'text-red-700 dark:text-red-400' },
+  info: { chip: 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800', dot: 'bg-blue-500', bar: '#3b82f6', text: 'text-blue-700 dark:text-blue-400' },
+  neutral: { chip: 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700', dot: 'bg-slate-400', bar: '#64748b', text: 'text-slate-600 dark:text-slate-400' },
 }
 
 export function Badge({ tone = 'neutral', children }) {
@@ -25,9 +25,9 @@ export function Card({ className = '', children }) {
 export function Stat({ label, value, sub }) {
   return (
     <div className="card p-4">
-      <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</div>
-      <div className="mt-1 text-2xl font-bold text-slate-900">{value}</div>
-      {sub ? <div className="mt-0.5 text-xs text-slate-500">{sub}</div> : null}
+      <div className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</div>
+      <div className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">{value}</div>
+      {sub ? <div className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{sub}</div> : null}
     </div>
   )
 }
@@ -38,19 +38,19 @@ export function ScoreBar({ score, level }) {
   return (
     <div>
       <div className="flex items-baseline justify-between">
-        <span className="text-sm font-semibold text-slate-700">Risk score</span>
-        <span className="text-2xl font-bold text-slate-900">
+        <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Risk score</span>
+        <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">
           {score}
-          <span className="text-sm font-medium text-slate-400"> / 100</span>
+          <span className="text-sm font-medium text-slate-400 dark:text-slate-500"> / 100</span>
         </span>
       </div>
-      <div className="mt-2 h-3 w-full overflow-hidden rounded-full bg-slate-200">
+      <div className="mt-2 h-3 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
         <div
           className="h-full rounded-full transition-all"
           style={{ width: `${Math.max(2, score)}%`, background: tone.bar }}
         />
       </div>
-      <div className="mt-1.5 flex justify-between text-[11px] font-medium text-slate-500">
+      <div className="mt-1.5 flex justify-between text-[11px] font-medium text-slate-500 dark:text-slate-400">
         <span>0 · Safe</span>
         <span>30 · Review</span>
         <span>60 · Block</span>
@@ -63,8 +63,8 @@ export function ScoreBar({ score, level }) {
 export function EmptyState({ title, body }) {
   return (
     <div className="card p-8 text-center">
-      <div className="text-base font-semibold text-slate-800">{title}</div>
-      <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">{body}</p>
+      <div className="text-base font-semibold text-slate-800 dark:text-slate-200">{title}</div>
+      <p className="mx-auto mt-1 max-w-md text-sm text-slate-500 dark:text-slate-400">{body}</p>
     </div>
   )
 }

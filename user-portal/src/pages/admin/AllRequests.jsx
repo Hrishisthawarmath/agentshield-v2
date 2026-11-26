@@ -23,8 +23,8 @@ export default function AllRequests() {
   return (
     <div className="fade-up space-y-4">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">All Requests</h1>
-        <p className="mt-1 text-sm text-slate-600">Every request from every user. Open one to see its full verdict, or open a user’s panel to see it as they see it.</p>
+        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">All Requests</h1>
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Every request from every user. Open one to see its full verdict, or open a user’s panel to see it as they see it.</p>
       </div>
 
       <div className="card flex flex-wrap gap-2 p-3">
@@ -56,21 +56,21 @@ export default function AllRequests() {
           {list.map((r) => (
             <div key={r.id} className="card px-4 py-3.5">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <Link to={`/admin/requests/${r.id}`} className="text-sm font-bold text-slate-900 hover:text-blue-700">
+                <Link to={`/admin/requests/${r.id}`} className="text-sm font-bold text-slate-900 dark:text-slate-100 hover:text-blue-700 dark:text-blue-400">
                   {r.userName} — {r.name}: {r.goal}
                 </Link>
                 <span className="flex items-center gap-2">
                   <Badge tone={r.scan.level === 'SAFE' ? 'safe' : r.scan.level === 'LOW' ? 'review' : 'blocked'}>
                     {r.scan.level} · {r.scan.score}/100
                   </Badge>
-                  <span className="text-xs font-semibold text-slate-600">{statusText(r.status).label}</span>
+                  <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">{statusText(r.status).label}</span>
                 </span>
               </div>
-              <div className="mt-1 flex flex-wrap items-center gap-x-3 text-xs text-slate-500">
+              <div className="mt-1 flex flex-wrap items-center gap-x-3 text-xs text-slate-500 dark:text-slate-400">
                 <span>{r.id} · {timeAgo(r.ts)}</span>
                 <span>{r.userEmail}</span>
-                <Link to={`/admin/requests/${r.id}`} className="font-semibold text-blue-700">Open request →</Link>
-                <Link to={`/admin/users/${encodeURIComponent(r.userEmail)}`} className="font-semibold text-blue-700">
+                <Link to={`/admin/requests/${r.id}`} className="font-semibold text-blue-700 dark:text-blue-400">Open request →</Link>
+                <Link to={`/admin/users/${encodeURIComponent(r.userEmail)}`} className="font-semibold text-blue-700 dark:text-blue-400">
                   Open {r.userName}’s panel →
                 </Link>
               </div>

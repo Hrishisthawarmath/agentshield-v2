@@ -12,8 +12,8 @@ export default function Queue() {
   return (
     <div className="fade-up space-y-4">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">Approval Queue</h1>
-        <p className="mt-1 max-w-2xl text-sm text-slate-600">
+        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">Approval Queue</h1>
+        <p className="mt-1 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
           Every request that scored 30 or higher, or had an action held for review. Approve runs the
           held actions in the sandbox; deny blocks them. Actions the policies already blocked stay
           blocked either way. Your decision shows up in the user’s panel straight away.
@@ -31,8 +31,8 @@ export default function Queue() {
             <article key={r.id} className="space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">{r.userName} — {r.goal}</h2>
-                  <p className="text-sm text-slate-500">
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">{r.userName} — {r.goal}</h2>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
                     {r.id} · {r.userEmail} · {timeAgo(r.ts)} · {attackTypePlain(r.scan.attackType)}
                   </p>
                 </div>

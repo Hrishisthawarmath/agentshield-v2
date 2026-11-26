@@ -20,8 +20,8 @@ export default function AdminDashboard() {
     <div className="fade-up space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">Admin Dashboard</h1>
-          <p className="mt-1 text-sm text-slate-600">Every user’s requests, threats, and decisions — in one place.</p>
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">Admin Dashboard</h1>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Every user’s requests, threats, and decisions — in one place.</p>
         </div>
         {awaiting.length > 0 && (
           <Link to="/admin/queue" className="btn btn-danger">
@@ -39,7 +39,7 @@ export default function AdminDashboard() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
-          <h2 className="text-base font-bold text-slate-900">Requests by risk level</h2>
+          <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">Requests by risk level</h2>
           <div className="mt-3 h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={byLevel} margin={{ top: 4, right: 8, left: -18, bottom: 0 }}>
@@ -56,38 +56,38 @@ export default function AdminDashboard() {
         </Card>
 
         <Card>
-          <h2 className="text-base font-bold text-slate-900">Latest activity</h2>
+          <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">Latest activity</h2>
           {events.length === 0 ? (
-            <p className="mt-3 text-sm text-slate-500">No activity yet.</p>
+            <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">No activity yet.</p>
           ) : (
             <ul className="mt-3 space-y-2">
               {events.map((e) => (
-                <li key={e.id} className="flex items-start gap-2.5 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2">
+                <li key={e.id} className="flex items-start gap-2.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 px-3 py-2">
                   <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${e.decision === 'BLOCKED' ? 'bg-red-500' : e.decision === 'APPROVED' ? 'bg-emerald-500' : 'bg-blue-500'}`} />
                   <span className="min-w-0">
-                    <span className="block text-sm font-semibold text-slate-800">{e.type} — {e.userName}</span>
-                    <span className="block truncate text-sm text-slate-600">{e.description}</span>
-                    <span className="block text-xs text-slate-500">{timeAgo(e.ts)} · Risk {e.risk}/100</span>
+                    <span className="block text-sm font-semibold text-slate-800 dark:text-slate-200">{e.type} — {e.userName}</span>
+                    <span className="block truncate text-sm text-slate-600 dark:text-slate-400">{e.description}</span>
+                    <span className="block text-xs text-slate-500 dark:text-slate-400">{timeAgo(e.ts)} · Risk {e.risk}/100</span>
                   </span>
                 </li>
               ))}
             </ul>
           )}
-          <Link to="/admin/events" className="mt-3 inline-block text-sm font-semibold text-blue-700">Open the full audit log →</Link>
+          <Link to="/admin/events" className="mt-3 inline-block text-sm font-semibold text-blue-700 dark:text-blue-400">Open the full audit log →</Link>
         </Card>
       </div>
 
       {awaiting.length > 0 && (
         <Card>
-          <h2 className="text-base font-bold text-slate-900">Needs your decision now</h2>
+          <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">Needs your decision now</h2>
           <div className="mt-3 space-y-2">
             {awaiting.slice(0, 3).map((r) => (
-              <Link key={r.id} to={`/admin/requests/${r.id}`} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5">
+              <Link key={r.id} to={`/admin/requests/${r.id}`} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/30 px-3 py-2.5">
                 <span>
-                  <span className="block text-sm font-bold text-slate-900">{r.userName} — {r.goal}</span>
-                  <span className="block text-xs text-slate-600">{r.scan.attackType} · Risk {r.scan.score}/100 · {timeAgo(r.ts)}</span>
+                  <span className="block text-sm font-bold text-slate-900 dark:text-slate-100">{r.userName} — {r.goal}</span>
+                  <span className="block text-xs text-slate-600 dark:text-slate-400">{r.scan.attackType} · Risk {r.scan.score}/100 · {timeAgo(r.ts)}</span>
                 </span>
-                <span className="text-sm font-bold text-amber-800">Review →</span>
+                <span className="text-sm font-bold text-amber-800 dark:text-amber-300">Review →</span>
               </Link>
             ))}
           </div>
