@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useStore } from '../../store.jsx'
 import { allRequests, usersWithRequests, statusText } from '../../lib/requests.js'
-import { Badge, EmptyState, timeAgo } from '../../components/ui.jsx'
+import { Badge, EmptyState, LivePill, timeAgo } from '../../components/ui.jsx'
 
 export default function AllRequests() {
   const { store } = useStore()
@@ -22,9 +22,12 @@ export default function AllRequests() {
 
   return (
     <div className="fade-up space-y-4">
-      <div>
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">All Requests</h1>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Every request from every user. Open one to see its full verdict, or open a user’s panel to see it as they see it.</p>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">All Requests</h1>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Every request from every user. Open one to see its full verdict, or open a user’s panel to see it as they see it.</p>
+        </div>
+        <LivePill />
       </div>
 
       <div className="card flex flex-wrap gap-2 p-3">

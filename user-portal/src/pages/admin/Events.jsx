@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Download } from 'lucide-react'
 import { useStore } from '../../store.jsx'
 import { allEvents } from '../../lib/requests.js'
-import { Badge, EmptyState, fmtTime } from '../../components/ui.jsx'
+import { Badge, EmptyState, LivePill, fmtTime } from '../../components/ui.jsx'
 
 function toCsv(rows) {
   const head = ['time', 'user', 'type', 'description', 'risk', 'decision', 'reason']
@@ -50,9 +50,12 @@ export default function Events() {
           <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">Events — Audit Log</h1>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Every check, block, approval and denial, with its reasons. Nothing is hidden.</p>
         </div>
-        <button type="button" className="btn btn-outline" onClick={downloadCsv}>
-          <Download className="h-4 w-4" /> Export CSV
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <LivePill />
+          <button type="button" className="btn btn-outline" onClick={downloadCsv}>
+            <Download className="h-4 w-4" /> Export CSV
+          </button>
+        </div>
       </div>
 
       <div className="card flex flex-wrap gap-2 p-3">
@@ -90,7 +93,7 @@ export default function Events() {
             </thead>
             <tbody>
               {filtered.map((e) => (
-                <tr key={e.id} className="border-b border-slate-100 dark:border-slate-800 last:border-0">
+                <tr key={e.id} className="border-b border-slate-100 dark:border-slate-800 last:border-0 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800">
                   <td className="whitespace-nowrap px-4 py-3 text-slate-500 dark:text-slate-400">{fmtTime(e.ts)}</td>
                   <td className="px-4 py-3">
                     <span className="block font-semibold text-slate-800 dark:text-slate-200">{e.type}</span>

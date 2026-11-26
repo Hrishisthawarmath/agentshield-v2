@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { FlaskConical, ShieldCheck, Play, ListChecks, ArrowRight, RotateCcw } from 'lucide-react'
 import { useStore } from '../../store.jsx'
 import { SAMPLE_TASKS, verdictOf, statusText } from '../../lib/requests.js'
-import { Badge, Card } from '../../components/ui.jsx'
+import { Badge, Card, LivePill } from '../../components/ui.jsx'
 import VerdictCard from '../../components/VerdictCard.jsx'
 
 const SOURCE_OPTIONS = [
@@ -125,9 +125,12 @@ export default function PromptLab() {
   return (
     <div className="fade-up space-y-6">
       <section className="card p-6 sm:p-8">
-        <div className="flex items-center gap-2">
-          <FlaskConical className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">Prompt Lab</h1>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <FlaskConical className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">Prompt Lab</h1>
+          </div>
+          <LivePill />
         </div>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-400 sm:text-base">
           Test any prompt — paste it from a dataset, a document, an email, or anywhere else.

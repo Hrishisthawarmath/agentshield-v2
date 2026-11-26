@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { CheckCircle2, XCircle } from 'lucide-react'
 import { useStore } from '../../store.jsx'
 import { awaitingRequests, attackTypePlain } from '../../lib/requests.js'
-import { Badge, EmptyState, timeAgo } from '../../components/ui.jsx'
+import { Badge, EmptyState, LivePill, timeAgo } from '../../components/ui.jsx'
 import VerdictCard from '../../components/VerdictCard.jsx'
 
 export default function Queue() {
@@ -11,13 +11,16 @@ export default function Queue() {
 
   return (
     <div className="fade-up space-y-4">
-      <div>
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">Approval Queue</h1>
-        <p className="mt-1 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
-          Every request that scored 30 or higher, or had an action held for review. Approve runs the
-          held actions in the sandbox; deny blocks them. Actions the policies already blocked stay
-          blocked either way. Your decision shows up in the user’s panel straight away.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">Approval Queue</h1>
+          <p className="mt-1 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
+            Every request that scored 30 or higher, or had an action held for review. Approve runs the
+            held actions in the sandbox; deny blocks them. Actions the policies already blocked stay
+            blocked either way. Your decision shows up in the user’s panel straight away.
+          </p>
+        </div>
+        <LivePill />
       </div>
 
       {queue.length === 0 ? (

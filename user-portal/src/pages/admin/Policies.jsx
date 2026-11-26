@@ -1,6 +1,6 @@
 import { useStore } from '../../store.jsx'
 import { POLICIES, TOOLS, RISK_BANDS, modelInfo } from '../../lib/requests.js'
-import { Card, Badge } from '../../components/ui.jsx'
+import { Card, Badge, LivePill } from '../../components/ui.jsx'
 
 export default function Policies() {
   const { store, togglePolicy } = useStore()
@@ -8,12 +8,15 @@ export default function Policies() {
 
   return (
     <div className="fade-up space-y-6">
-      <div>
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">Policies</h1>
-        <p className="mt-1 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
-          The nine rules checked before any tool runs. Turning one off affects future checks only —
-          past decisions stay as they were. This is the operator view; users never see these controls.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">Policies</h1>
+          <p className="mt-1 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
+            The nine rules checked before any tool runs. Turning one off affects future checks only —
+            past decisions stay as they were. This is the operator view; users never see these controls.
+          </p>
+        </div>
+        <LivePill />
       </div>
 
       <div className="space-y-2">
