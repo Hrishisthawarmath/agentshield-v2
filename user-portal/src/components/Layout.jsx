@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet } from 'react-router-dom'
-import { Shield, LogOut, Home, ListChecks, CircleHelp, LayoutDashboard, Inbox, Users, ScrollText, ShieldCheck } from 'lucide-react'
+import { Shield, LogOut, Home, ListChecks, CircleHelp, FlaskConical, LayoutDashboard, Inbox, Users, ScrollText, ShieldCheck } from 'lucide-react'
 import { useStore } from '../store.jsx'
 
 function Brand({ home }) {
@@ -19,6 +19,7 @@ function Brand({ home }) {
 const USER_NAV = [
   { to: '/', label: 'My Assistant', icon: Home, end: true },
   { to: '/requests', label: 'My Requests', icon: ListChecks },
+  { to: '/lab', label: 'Prompt Lab', icon: FlaskConical },
   { to: '/how-it-works', label: 'How it works', icon: CircleHelp },
 ]
 

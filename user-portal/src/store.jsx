@@ -53,6 +53,26 @@ export function StoreProvider({ children }) {
     [store, session],
   )
 
+  const submitMany = useCallback(
+    (inputs) => {
+      if (!session || !inputs.length) return []
+      let next = store
+      const ids = []
+      for (const input of inputs) {
+        next = submitRequest(next, {
+          ...input,
+          userEmail: session.email,
+          userName: session.name,
+        })
+        ids.push(next.lastId)
+      }
+      saveState(next)
+      setStore(next)
+      return ids
+    },
+    [store, session],
+  )
+
   const decide = useCallback(
     (requestId, decision) => {
       if (!session || session.role !== 'admin') return
@@ -79,8 +99,8 @@ export function StoreProvider({ children }) {
   }, [])
 
   const value = useMemo(
-    () => ({ session, accounts: ACCOUNTS, signIn, signOut, store, submit, decide, togglePolicy, resetDemo }),
-    [session, store, signIn, signOut, submit, decide, togglePolicy, resetDemo],
+    () => ({ session, accounts: ACCOUNTS, signIn, signOut, store, submit, submitMany, decide, togglePolicy, resetDemo }),
+    [session, store, signIn, signOut, submit, submitMany, decide, togglePolicy, resetDemo],
   )
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }

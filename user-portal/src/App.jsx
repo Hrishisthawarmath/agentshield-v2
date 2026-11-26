@@ -5,6 +5,7 @@ import Home from './pages/user/Home.jsx'
 import MyRequests from './pages/user/MyRequests.jsx'
 import RequestDetail from './pages/user/RequestDetail.jsx'
 import HowItWorks from './pages/user/HowItWorks.jsx'
+import PromptLab from './pages/user/PromptLab.jsx'
 import AdminDashboard from './pages/admin/Dashboard.jsx'
 import Queue from './pages/admin/Queue.jsx'
 import AllRequests from './pages/admin/AllRequests.jsx'
@@ -41,6 +42,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/requests" element={<MyRequests />} />
         <Route path="/requests/:id" element={<RequestDetail />} />
+        <Route path="/lab" element={<PromptLab />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
