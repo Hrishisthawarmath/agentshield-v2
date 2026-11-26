@@ -1,0 +1,83 @@
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useStore } from '../../store.jsx'
+import { allRequests, usersWithRequests, statusText } from '../../lib/requests.js'
+import { Badge, EmptyState, timeAgo } from '../../components/ui.jsx'
+
+export default function AllRequests() {
+  const { store } = useStore()
+  const [userFilter, setUserFilter] = useState('all')
+  const [levelFilter, setLevelFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [query, setQuery] = useState('')
+  const users = usersWithRequests(store)
+
+  const list = allRequests(store).filter((r) => {
+    if (userFilter !== 'all' && r.userEmail !== userFilter) return false
+    if (levelFilter !== 'all' && r.scan.level !== levelFilter) return false
+    if (statusFilter !== 'all' && r.status !== statusFilter) return false
+    if (query && !`${r.goal} ${r.name} ${r.userName}`.toLowerCase().includes(query.toLowerCase())) return false
+    return true
+  })
+
+  return (
+    <div className="fade-up space-y-4">
+      <div>
+        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">All Requests</h1>
+        <p className="mt-1 text-sm text-slate-600">Every request from every user. Open one to see its full verdict, or open a user’s panel to see it as they see it.</p>
+      </div>
+
+      <div className="card flex flex-wrap gap-2 p-3">
+        <select className="input !w-auto" value={userFilter} onChange={(e) => setUserFilter(e.target.value)} aria-label="Filter by user">
+          <option value="all">All users</option>
+          {users.map((u) => <option key={u.email} value={u.email}>{u.name} ({u.count})</option>)}
+        </select>
+        <select className="input !w-auto" value={levelFilter} onChange={(e) => setLevelFilter(e.target.value)} aria-label="Filter by risk level">
+          <option value="all">All risk levels</option>
+          <option value="SAFE">Safe</option>
+          <option value="LOW">Low</option>
+          <option value="HIGH">High</option>
+          <option value="CRITICAL">Critical</option>
+        </select>
+        <select className="input !w-auto" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} aria-label="Filter by status">
+          <option value="all">All statuses</option>
+          <option value="allowed">Allowed</option>
+          <option value="awaiting">Waiting for decision</option>
+          <option value="approved">Approved</option>
+          <option value="denied">Denied</option>
+        </select>
+        <input className="input !w-auto flex-1" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by goal, user or request name" />
+      </div>
+
+      {list.length === 0 ? (
+        <EmptyState title="No requests match" body="Try clearing a filter — or check a new request from the user view." />
+      ) : (
+        <div className="space-y-2">
+          {list.map((r) => (
+            <div key={r.id} className="card px-4 py-3.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <Link to={`/admin/requests/${r.id}`} className="text-sm font-bold text-slate-900 hover:text-blue-700">
+                  {r.userName} — {r.name}: {r.goal}
+                </Link>
+                <span className="flex items-center gap-2">
+                  <Badge tone={r.scan.level === 'SAFE' ? 'safe' : r.scan.level === 'LOW' ? 'review' : 'blocked'}>
+                    {r.scan.level} · {r.scan.score}/100
+                  </Badge>
+                  <span className="text-xs font-semibold text-slate-600">{statusText(r.status).label}</span>
+                </span>
+              </div>
+              <div className="mt-1 flex flex-wrap items-center gap-x-3 text-xs text-slate-500">
+                <span>{r.id} · {timeAgo(r.ts)}</span>
+                <span>{r.userEmail}</span>
+                <Link to={`/admin/requests/${r.id}`} className="font-semibold text-blue-700">Open request →</Link>
+                <Link to={`/admin/users/${encodeURIComponent(r.userEmail)}`} className="font-semibold text-blue-700">
+                  Open {r.userName}’s panel →
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

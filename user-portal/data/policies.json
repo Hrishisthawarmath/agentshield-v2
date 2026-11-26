@@ -1,0 +1,76 @@
+{
+ "policies": [
+  {
+   "id": "P01",
+   "key": "untrusted",
+   "name": "External content is untrusted",
+   "description": "Tool calls that originate from document, email, web, tool-output or prompt content inherit that content's risk.",
+   "severity": "HIGH",
+   "action": "REVIEW / BLOCK"
+  },
+  {
+   "id": "P02",
+   "key": "payment_approval",
+   "name": "Payment actions require approval",
+   "description": "Any money-movement action needs human approval before execution.",
+   "severity": "CRITICAL",
+   "action": "REVIEW"
+  },
+  {
+   "id": "P03",
+   "key": "high_risk_confirm",
+   "name": "High-risk tools require confirmation",
+   "description": "SENSITIVE tools need confirmation when the request context is not clean.",
+   "severity": "HIGH",
+   "action": "REVIEW"
+  },
+  {
+   "id": "P04",
+   "key": "no_credentials",
+   "name": "Agents cannot access credentials",
+   "description": "Secrets, .env files, system prompts and path traversal are never readable by the agent.",
+   "severity": "CRITICAL",
+   "action": "BLOCK"
+  },
+  {
+   "id": "P05",
+   "key": "unknown_tools",
+   "name": "Unknown tools are blocked",
+   "description": "Only registered sandbox tools can run; anything else is denied.",
+   "severity": "CRITICAL",
+   "action": "BLOCK"
+  },
+  {
+   "id": "P06",
+   "key": "param_validation",
+   "name": "Tool parameters must be validated",
+   "description": "Wildcard lookups are denied; recipients and URLs must be on the allow-list; amounts above ₹50,000 are denied.",
+   "severity": "HIGH",
+   "action": "REVIEW / BLOCK"
+  },
+  {
+   "id": "P07",
+   "key": "goal_lock",
+   "name": "Agents cannot change their original objective",
+   "description": "A tool not required by the user's original goal is treated as goal deviation (compromised agent).",
+   "severity": "CRITICAL",
+   "action": "BLOCK"
+  },
+  {
+   "id": "P08",
+   "key": "no_export",
+   "name": "Sensitive data cannot be exported",
+   "description": "Customer data, credentials or account numbers cannot leave via email or web.",
+   "severity": "CRITICAL",
+   "action": "BLOCK"
+  },
+  {
+   "id": "P09",
+   "key": "human_approval",
+   "name": "Critical actions require human approval",
+   "description": "Any otherwise-allowed action with risk ≥ 60 is held for a human.",
+   "severity": "HIGH",
+   "action": "REVIEW"
+  }
+ ]
+}
