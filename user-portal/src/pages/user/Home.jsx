@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { ShieldCheck, Search, ListChecks, Clock3, ArrowRight, FlaskConical } from 'lucide-react'
 import { useStore } from '../../store.jsx'
 import { SAMPLE_TASKS, requestsForUser, metrics, statusText } from '../../lib/requests.js'
-import { Badge, Card, EmptyState, timeAgo } from '../../components/ui.jsx'
+import { Badge, Card, EmptyState, LivePill, timeAgo } from '../../components/ui.jsx'
 
 const SOURCE_OPTIONS = [
   { value: 'user', label: 'I typed it myself' },
@@ -55,9 +55,12 @@ export default function Home() {
   return (
     <div className="fade-up space-y-6">
       <section className="card p-6 sm:p-8">
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-          Your AI assistant, guarded.
-        </h1>
+        <div className="flex items-start justify-between gap-3">
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
+            Your AI assistant, guarded.
+          </h1>
+          <LivePill />
+        </div>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-400 sm:text-base">
           Your assistant reads documents, emails and web pages to help you — but a hidden
           instruction inside that content can try to push it to do something you never asked

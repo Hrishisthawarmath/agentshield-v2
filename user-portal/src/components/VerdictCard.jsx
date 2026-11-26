@@ -14,6 +14,41 @@ const VERDICT_ICON = {
   blocked: Ban,
 }
 
+function RiskGauge({ score, level }) {
+  const v = verdictOf({ level })
+  const tone = TONE[v.tone]
+  const size = 120
+  const stroke = 10
+  const r = (size - stroke) / 2
+  const circumference = 2 * Math.PI * r
+  const offset = circumference - (Math.max(0, Math.min(100, score)) / 100) * circumference
+  return (
+    <div className="flex shrink-0 flex-col items-center gap-2">
+      <div className="relative" style={{ width: size, height: size }}>
+        <svg width={size} height={size} className="-rotate-90" role="img" aria-label={`Risk score ${score} out of 100`}>
+          <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} className="stroke-slate-200 dark:stroke-slate-700" />
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={r}
+            fill="none"
+            stroke={tone.bar}
+            strokeWidth={stroke}
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{score}</span>
+          <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">/ 100</span>
+        </div>
+      </div>
+      <Badge tone={v.tone}>{v.label}</Badge>
+    </div>
+  )
+}
+
 export default function VerdictCard({ request, showAdminActions = false, onDecide }) {
   const { scan, agent } = request
   const v = verdictOf(scan)
@@ -25,15 +60,17 @@ export default function VerdictCard({ request, showAdminActions = false, onDecid
     <div className="space-y-4">
       {/* Verdict */}
       <Card>
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="flex items-start gap-3">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="flex min-w-0 flex-1 items-start gap-3">
             <span className={`mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${tone.chip}`}>
               <Icon className="h-6 w-6" />
             </span>
-            <div>
+            <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">{v.headline}</h2>
-                <Badge tone={v.tone}>{v.label}</Badge>
+                <Badge tone={request.status === 'allowed' ? 'safe' : request.status === 'awaiting' ? 'review' : request.status === 'approved' ? 'safe' : 'blocked'}>
+                  {st.label}
+                </Badge>
               </div>
               <p className="mt-1 max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-400">{v.blurb}</p>
               <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
@@ -41,9 +78,7 @@ export default function VerdictCard({ request, showAdminActions = false, onDecid
               </p>
             </div>
           </div>
-          <Badge tone={request.status === 'allowed' ? 'safe' : request.status === 'awaiting' ? 'review' : request.status === 'approved' ? 'safe' : 'blocked'}>
-            {st.label}
-          </Badge>
+          <RiskGauge score={scan.score} level={scan.level} />
         </div>
 
         <div className="mt-5">

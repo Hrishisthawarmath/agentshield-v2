@@ -22,13 +22,23 @@ export function Card({ className = '', children }) {
   return <div className={`card p-5 ${className}`}>{children}</div>
 }
 
-export function Stat({ label, value, sub }) {
+export function Stat({ label, value, sub, delta, deltaTone = 'info' }) {
+  const dt = TONE[deltaTone] || TONE.info
   return (
-    <div className="card p-4">
-      <div className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</div>
-      <div className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">{value}</div>
+    <div className="card p-5">
+      <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-500 dark:text-slate-400">{label}</div>
+      <div className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">{value}</div>
+      {delta ? <div className={`mt-1.5 text-xs font-semibold ${dt.text}`}>{delta}</div> : null}
       {sub ? <div className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{sub}</div> : null}
     </div>
+  )
+}
+
+export function LivePill() {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/30 px-2.5 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-400">
+      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 pulse-dot" /> Live
+    </span>
   )
 }
 
