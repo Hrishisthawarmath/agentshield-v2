@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Bot, ScanSearch, ShieldAlert, Ban, Eye, CheckCircle2, Siren, Gauge, Play, Pause, RotateCcw, Activity, ShieldCheck, FlaskConical, Hourglass, Square } from 'lucide-react'
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar, PieChart, Pie, Cell, Legend } from 'recharts'
+import { ResponsiveContainer, ComposedChart, Area, Line, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceArea, ReferenceLine } from 'recharts'
 import { useStore, useMetrics, DEMO_STEPS } from '../store.jsx'
 import { Badge, Button, Card, CardHeader, PageHeader, Stat, Empty, HEX, TEXT, cx, fmtTime } from '../components/ui.jsx'
 import { EventFeed, ApprovalCard } from '../components/security.jsx'
@@ -38,10 +38,9 @@ export default function Dashboard() {
   const m = useMetrics()
   const runs = state.runs
   let cum = 0
-  const overTime = runs.map((r) => ({ t: fmtTime(r.ts).slice(0, 5), risk: r.scan.score, threats: (cum += r.scan.level !== 'SAFE' ? 1 : 0) }))
-  const types = Object.entries(runs.reduce((a, r) => (r.scan.level !== 'SAFE' ? { ...a, [r.scan.attackType]: (a[r.scan.attackType] || 0) + 1 } : a), {})).map(([k, v]) => ({ type: k.replace(' Prompt Injection', ' Inj.').replace('Injection', 'Inj.'), count: v }))
-  const dec = ['ALLOW', 'REVIEW', 'BLOCK'].map((k) => ({ name: k === 'ALLOW' ? 'Allowed' : k === 'REVIEW' ? 'Reviewed' : 'Blocked', key: k, value: m.calls.filter((c) => (k === 'REVIEW' ? c.decision === 'REVIEW' : k === 'BLOCK' ? c.status === 'BLOCKED' && c.decision !== 'REVIEW' : c.decision === 'ALLOW')).length }))
-  const dist = ['SAFE', 'LOW', 'HIGH', 'CRITICAL'].map((l) => ({ level: l, count: runs.filter((r) => r.scan.level === l).length }))
+  const outcomeOf = (r) => (r.agent?.compromised ? 'COMPROMISED' : r.agent?.calls.some((c) => c.status === 'BLOCKED') ? 'BLOCK' : r.agent?.calls.some((c) => c.status === 'PENDING') ? 'REVIEW' : r.scan.level === 'SAFE' ? 'ALLOW' : 'REVIEW')
+  const series = runs.map((r) => ({ id: r.id, t: fmtTime(r.ts).slice(0, 5), name: r.name, attack: r.scan.attackType, level: r.scan.level, outcome: outcomeOf(r), risk: r.scan.score, threats: (cum += r.scan.level !== 'SAFE' ? 1 : 0) }))
+  const decCount = (k) => series.filter((x) => (k === 'BLOCK' ? x.outcome === 'BLOCK' || x.outcome === 'COMPROMISED' : x.outcome === k)).length
   const blockedRecent = m.calls.filter((c) => c.status === 'BLOCKED').slice(-5).reverse()
 
   return (
@@ -94,17 +93,45 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-2">
-        <Card><CardHeader title="Threats Over Time" subtitle="Risk score per request & cumulative threats" />
-          <div className="h-60 p-4"><ResponsiveContainer><LineChart data={overTime}><CartesianGrid stroke="rgba(148,163,184,.08)" vertical={false} /><XAxis dataKey="t" {...axis} /><YAxis {...axis} domain={[0, 100]} width={30} /><Tooltip {...tip} /><Legend wrapperStyle={{ fontSize: 11 }} />
-            <Line type="monotone" dataKey="risk" name="Risk score" stroke="#3b82f6" strokeWidth={2} dot={{ r: 2.5 }} isAnimationActive={false} /><Line type="stepAfter" dataKey="threats" name="Cumulative threats" stroke="#f87171" strokeWidth={2} dot={false} isAnimationActive={false} /></LineChart></ResponsiveContainer></div></Card>
-        <Card><CardHeader title="Threat Types" subtitle="Classified attack technique" />
-          <div className="h-60 p-4"><ResponsiveContainer><BarChart data={types} layout="vertical" margin={{ left: 10 }}><CartesianGrid stroke="rgba(148,163,184,.08)" horizontal={false} /><XAxis type="number" allowDecimals={false} {...axis} /><YAxis type="category" dataKey="type" width={130} {...axis} /><Tooltip {...tip} cursor={{ fill: 'rgba(255,255,255,.03)' }} /><Bar dataKey="count" fill="#3b82f6" radius={[0, 4, 4, 0]} isAnimationActive={false} /></BarChart></ResponsiveContainer></div></Card>
-        <Card><CardHeader title="Decisions" subtitle="Tool-call outcomes" />
-          <div className="h-60 p-4"><ResponsiveContainer><PieChart><Pie data={dec} dataKey="value" nameKey="name" innerRadius={55} outerRadius={85} paddingAngle={3} stroke="none" isAnimationActive={false}>{dec.map((d) => <Cell key={d.key} fill={HEX[d.key]} />)}</Pie><Tooltip {...tip} /><Legend wrapperStyle={{ fontSize: 11 }} /></PieChart></ResponsiveContainer></div></Card>
-        <Card><CardHeader title="Risk Distribution" subtitle="Requests per severity band" />
-          <div className="h-60 p-4"><ResponsiveContainer><BarChart data={dist}><CartesianGrid stroke="rgba(148,163,184,.08)" vertical={false} /><XAxis dataKey="level" {...axis} /><YAxis allowDecimals={false} {...axis} width={30} /><Tooltip {...tip} cursor={{ fill: 'rgba(255,255,255,.03)' }} /><Bar dataKey="count" radius={[4, 4, 0, 0]} isAnimationActive={false}>{dist.map((d) => <Cell key={d.level} fill={HEX[d.level]} />)}</Bar></BarChart></ResponsiveContainer></div></Card>
-      </div>
+      <Card>
+        <CardHeader icon={Gauge} title="Security Overview" subtitle="Risk score of every request, cumulative threats and the decision taken — one view"
+          right={<div className="hidden flex-wrap gap-2 md:flex">
+            <Badge value="ALLOW">{decCount('ALLOW')} allowed</Badge><Badge value="REVIEW">{decCount('REVIEW')} review</Badge><Badge value="BLOCK">{decCount('BLOCK')} blocked</Badge></div>} />
+        <div className="h-[380px] px-2 pb-2 pt-4 md:px-4">
+          <ResponsiveContainer>
+            <ComposedChart data={series} margin={{ top: 10, right: 40, left: 0, bottom: 0 }}>
+              <defs><linearGradient id="riskFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#3b82f6" stopOpacity={0.45} /><stop offset="100%" stopColor="#3b82f6" stopOpacity={0.02} /></linearGradient></defs>
+              <ReferenceArea yAxisId="r" y1={80} y2={100} fill="#f87171" fillOpacity={0.05} />
+              <ReferenceArea yAxisId="r" y1={60} y2={80} fill="#fb923c" fillOpacity={0.04} />
+              <ReferenceArea yAxisId="r" y1={30} y2={60} fill="#facc15" fillOpacity={0.03} />
+              <ReferenceLine yAxisId="r" y={80} stroke="#f87171" strokeDasharray="4 4" strokeOpacity={0.5} label={{ value: 'CRITICAL', position: 'insideTopLeft', fill: '#f87171', fontSize: 10 }} />
+              <ReferenceLine yAxisId="r" y={60} stroke="#fb923c" strokeDasharray="4 4" strokeOpacity={0.4} label={{ value: 'BLOCK ≥ 60', position: 'insideTopLeft', fill: '#fb923c', fontSize: 10 }} />
+              <ReferenceLine yAxisId="r" y={30} stroke="#facc15" strokeDasharray="4 4" strokeOpacity={0.3} label={{ value: 'REVIEW ≥ 30', position: 'insideTopLeft', fill: '#facc15', fontSize: 10 }} />
+              <CartesianGrid stroke="rgba(148,163,184,.07)" vertical={false} />
+              <XAxis dataKey="id" {...axis} tickFormatter={(v) => v.replace('RUN-', '#')} />
+              <YAxis yAxisId="r" {...axis} domain={[0, 100]} width={34} />
+              <YAxis yAxisId="c" orientation="right" {...axis} allowDecimals={false} width={30} />
+              <Tooltip {...tip} content={({ active, payload }) => {
+                if (!active || !payload?.length) return null
+                const d = payload[0].payload
+                return <div className="rounded-lg border border-white/10 bg-[#0b1120] p-3 text-xs shadow-xl">
+                  <div className="font-semibold text-white">{d.id} · {d.t}</div><div className="text-slate-400">{d.name}</div>
+                  <div className="mt-1.5 flex items-center gap-2"><span className={cx('font-mono text-base font-bold', TEXT[d.level])}>{d.risk}</span><Badge value={d.level}>{d.level}</Badge><Badge value={d.outcome}>{d.outcome === 'BLOCK' ? 'BLOCKED' : d.outcome === 'ALLOW' ? 'ALLOWED' : d.outcome}</Badge></div>
+                  <div className="mt-1 text-slate-400">{d.attack}</div><div className="text-slate-500">Cumulative threats: {d.threats}</div></div>
+              }} />
+              <Area yAxisId="r" type="monotone" dataKey="risk" name="Risk score" stroke="#3b82f6" strokeWidth={2.5} fill="url(#riskFill)" isAnimationActive={false}
+                dot={({ cx: x, cy: y, payload, index }) => <circle key={index} cx={x} cy={y} r={6} fill={HEX[payload.outcome] || '#ef4444'} stroke="#0b1120" strokeWidth={2} />} activeDot={{ r: 8 }} />
+              <Line yAxisId="c" type="stepAfter" dataKey="threats" name="Cumulative threats" stroke="#f87171" strokeWidth={2} strokeDasharray="5 3" dot={false} isAnimationActive={false} />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/[0.06] px-5 py-3 text-xs text-slate-400">
+          <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 rounded bg-blue-500" />Risk score (left axis)</span>
+          <span className="flex items-center gap-1.5"><span className="h-0.5 w-5 border-t-2 border-dashed border-red-400" />Cumulative threats (right axis)</span>
+          {[['ALLOW', 'Allowed'], ['REVIEW', 'Human review'], ['BLOCK', 'Blocked']].map(([k, l]) => <span key={k} className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full" style={{ background: HEX[k] }} />{l}</span>)}
+          <span className="ml-auto text-slate-500">{series.length} requests · {m.threats} threats · {m.critical} critical</span>
+        </div>
+      </Card>
     </div>
   )
 }

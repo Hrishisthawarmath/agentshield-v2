@@ -26,7 +26,7 @@ export const TONE = {
   NONE: 'text-slate-300 bg-slate-500/10 ring-slate-500/30',
 }
 export const TEXT = { SAFE: 'text-emerald-400', LOW: 'text-yellow-300', HIGH: 'text-orange-400', CRITICAL: 'text-red-400', ALLOW: 'text-emerald-400', REVIEW: 'text-amber-400', BLOCK: 'text-red-400' }
-export const HEX = { SAFE: '#34d399', LOW: '#facc15', HIGH: '#fb923c', CRITICAL: '#f87171', ALLOW: '#34d399', REVIEW: '#fbbf24', BLOCK: '#f87171', INFO: '#38bdf8' }
+export const HEX = { SAFE: '#34d399', LOW: '#facc15', HIGH: '#fb923c', CRITICAL: '#f87171', ALLOW: '#34d399', REVIEW: '#fbbf24', BLOCK: '#f87171', INFO: '#38bdf8', COMPROMISED: '#dc2626' }
 export const levelOfScore = (s) => (s >= 80 ? 'CRITICAL' : s >= 60 ? 'HIGH' : s >= 30 ? 'LOW' : 'SAFE')
 
 export function Badge({ value, children, className, dot }) {
